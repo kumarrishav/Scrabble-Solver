@@ -1,27 +1,66 @@
-import java.util.*; 
+import java.util.*;
 import java.io.*; 
 
-public class ScrabbleSolver {
-
+public class SCrabbleSolver {
+	private static int maxScore = 0;
+	private static String maxWord = "";
 	private HashMap<String, Integer> dictionaryScoreMap;
-	private HashMap<Character, Integer> letterScoreMap;
-	
-	public ScrabbleSolver(File dictionary) throws FileNotFoundException{
+	private static HashMap<Character, Integer> letterScoreMap;
+	public static TreeMap<String,String> FileMap ;
+	public SCrabbleSolver(File dictionary) throws FileNotFoundException{
 	    letterScoreInitializer();
-		dictionaryScoreMap = new HashMap<String,Integer>(); 
-		Scanner input = new Scanner(dictionary);   
-		while(input.hasNext()) { 
-		    String currentWord = input.next().toUpperCase();
-			dictionaryScoreMap.put(currentWord,wordScoreCalculator(currentWord));
+//		dictionaryScoreMap = new HashMap<String,Integer>(); 
+//		Scanner input = new Scanner(dictionary);   
+//		while(input.hasNext()) { 
+//		    String currentWord = input.next().toUpperCase();
+//			dictionaryScoreMap.put(currentWord,wordScoreCalculator(currentWord));
+//		}
+	}
+	
+	private static void wordScoreCalculator(char[] a) {
+	    int wordScore = 0;
+	    //System.out.println( letterScoreMap.get(a[i]));
+//	    for(int i = 0; i < a.length; i++)
+//	        wordScore += letterScoreMap.get(a[i]);
+	    System.out.println(wordScore);
+       // compareMaxScore(wordScore, a);
+	}
+	
+	private static void compareMaxScore(int wordScore, char[] arr){
+		if(wordScore >= maxScore){
+			maxWord += arr.toString() +" ";
+			System.out.println(maxWord);
 		}
 	}
 	
-	private int wordScoreCalculator(String word) {
-	    int wordScore = 0;
-		char[] charArray = word.toCharArray();
-	    for(int i = 0; i < charArray.length; i++)
-	        wordScore += letterScoreMap.get(charArray[i]);
-        return wordScore;
+	/*public static int calculateScore(String s){
+		char[] letters = s.toCharArray();
+		int value = 0;
+		for(int i = 0;i < letters.length ;i++ ){
+			value += letterScoreMap.get(letters[i]);
+		}
+		return value;
+	}*/
+	
+	public static void buildHashMap(){
+		FileMap = new TreeMap<>();
+		try{
+			Scanner s = new Scanner(new File("C:/Users/mpitchai/workspace/ScrabbleScorer/src/sowpods.txt"));
+			String line ="";
+			while(s.hasNextLine()){
+				line = s.nextLine();
+				char [] a = line.toCharArray();
+				Arrays.sort(a); 
+				String word = "";
+				for(int i = 0 ; i < a.length ; i++ ){
+					word +=a[i];
+				}
+				FileMap.put( word , line );
+			}
+		}
+		catch(Exception E){
+			System.out.println("Exception"+E);
+		}
 	}
 	
 	private void letterScoreInitializer(){
@@ -55,60 +94,119 @@ public class ScrabbleSolver {
 		letterScoreMap.put('Z',10);
 	}
 	
-	 public static ArrayList<String> permutation(String str) { 
-        ArrayList<String> result = new ArrayList<String>();
-        return permutation("", str, result); 
-    }
-    
-    private static ArrayList<String> permutation(String prefix, String str, ArrayList<String> result) {
-        int n = str.length();
-        if (n == 0) {
-            result.add(prefix);
-        }
-        else {
-            for (int i = 0; i < n; i++)
-                permutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n), result);
-        }
-        return result;
-    }
+	public static boolean isValidWord(char [] a ){
+			
+			
+			String word = "";
+			
+			for(int i=0;i<a.length;i++){
+				word+=a[i];
+			}
+			//System.out.println();
+			try{
+				Scanner s = new Scanner(new File("C:/Users/mpitchai/workspace/ScrabbleScorer/src/sowpods.txt"));
+				String line ="";
+				while(s.hasNextLine()){
+					line = s.nextLine();
+					if(line.equalsIgnoreCase(word)){
+						System.out.println("Valid Word : " + word);
+						return true;
+					}
+				}
+			}
+			catch(Exception E){
+				System.out.println("Exception"+E);
+			}
+			
+			return false;
+	}
 	
-	private static void combination(char arr[], char data[], int start, int end, int index, int r) {
-        if (index == r) {
-            for (int j=0; j<r; j++) {
-                System.out.print(data[j]+" ");
-            }
-            System.out.println("");
-            return;
-        }
+	
+	public static void permute(char[] a ,int k)
+	{
+		if (k == a.length) 
+        {
+			if(isValidWord(a)){
+				wordScoreCalculator(a);
+			}
+        } 
+        else 
+        {
+            for (int i = k; i < a.length; i++) 
+            {
+                char temp = a[k];
+                a[k] = a[i];
+                a[i] = temp;
  
-        for (int i=start; i<=end && end-i+1 >= r-index; i++) {
-            data[index] = arr[i];
-            combination(arr, data, i+1, end, index+1, r);
+                permute(a, k + 1);
+ 
+                temp = a[k];
+                a[k] = a[i];
+                a[i] = temp;
+            }
         }
-    }
+		
+	}
+
+	public static void Combination(String s, int n, int r)
+	{
+	    char arr[] = s.toCharArray();
+	    char data[] = new char[r];
+	    //System.out.println("Combination");
+	    combinationUtil(arr, data, 0, n-1, 0, r);
+	}
 	
+	public static boolean isValidforLetter(int pos,char letter, String str)
+	{
+		int index=str.getIndexOf(letter),int max=8;
+		for(int i=pos;i>=1;i--)
+		{
+			if(index==i)
+				if(str.length()<=max--)
+					return true;
+				
+		}
+		return false;
+	}
+	
+public static void combinationUtil(char arr[], char data[], int start, int end,
+            int index, int r)
+	{
+		
+		if (index == r)
+		{
+			for (int j=0; j<r; j++)
+			{
+				//System.out.print(data[j]);
+				permute(data,0);
+				//System.out.println("Permutation is over ");
+				
+			}
+			//System.out.println("");
+			
+			return;
+		}
+	
+		for (int i=start; i<=end && end-i+1 >= r-index; i++){
+			data[index] = arr[i];
+			combinationUtil(arr, data, i+1, end, index+1, r);
+		}
+	}
 	public static void main(String []args){
         
-        
-        String str = "Hello";
-        
-        char[] a = {'a','b','c'};
-        int r = 3;
-        char data[]=new char[r];
-        
-        ArrayList<String> result = new ArrayList<String>();
-        
-        result = permutation("Hello");
-        
-        System.out.println(result.size());
-        
-        // for(int i =0; i<result.size();++i) {
-        //     System.out.println(result.get(i));
-        // }
-         
-        
-        combination(a, data, 0, a.length - 1, 0, r);
-        
+		
+		Scanner s = new Scanner(System.in);
+		String input = s.nextLine();
+		//System.out.println(input);
+		//Combination(input , input.length(),3);
+		/*for(int i=0 ; i<=input.length() ; i++){
+			Combination(input , input.length() , i);
+		}*/
+		buildHashMap();
+		
+		for( String key : FileMap.keySet()){
+			System.out.println("Key : " + key +"  Value : " + FileMap.get(key));
+		}
      }
 	
 }
