@@ -1,4 +1,4 @@
-import java.util.*; 
+import java.util.*;
 import java.io.*; 
 
 public class ScrabbleSolver {
@@ -86,6 +86,19 @@ public class ScrabbleSolver {
             combination(arr, data, i+1, end, index+1, r);
         }
     }
+	
+	public static boolean isValidforLetter(int pos,char letter, String str)
+	{
+		int index=str.getIndexOf(letter),int max=8;
+		for(int i=pos;i>=1;i--)
+		{
+			if(index==i)
+				if(str.length()<=max--)
+					return true;
+				
+		}
+		return false;
+	}
 	
 	public static void main(String []args){
         
