@@ -55,4 +55,60 @@ public class ScrabbleSolver {
 		letterScoreMap.put('Z',10);
 	}
 	
+	 public static ArrayList<String> permutation(String str) { 
+        ArrayList<String> result = new ArrayList<String>();
+        return permutation("", str, result); 
+    }
+    
+    private static ArrayList<String> permutation(String prefix, String str, ArrayList<String> result) {
+        int n = str.length();
+        if (n == 0) {
+            result.add(prefix);
+        }
+        else {
+            for (int i = 0; i < n; i++)
+                permutation(prefix + str.charAt(i), str.substring(0, i) + str.substring(i+1, n), result);
+        }
+        return result;
+    }
+	
+	private static void combination(char arr[], char data[], int start, int end, int index, int r) {
+        if (index == r) {
+            for (int j=0; j<r; j++) {
+                System.out.print(data[j]+" ");
+            }
+            System.out.println("");
+            return;
+        }
+ 
+        for (int i=start; i<=end && end-i+1 >= r-index; i++) {
+            data[index] = arr[i];
+            combination(arr, data, i+1, end, index+1, r);
+        }
+    }
+	
+	public static void main(String []args){
+        
+        
+        String str = "Hello";
+        
+        char[] a = {'a','b','c'};
+        int r = 3;
+        char data[]=new char[r];
+        
+        ArrayList<String> result = new ArrayList<String>();
+        
+        result = permutation("Hello");
+        
+        System.out.println(result.size());
+        
+        // for(int i =0; i<result.size();++i) {
+        //     System.out.println(result.get(i));
+        // }
+         
+        
+        combination(a, data, 0, a.length - 1, 0, r);
+        
+     }
+	
 }
